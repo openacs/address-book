@@ -1,9 +1,7 @@
-<master>
-<property name=>@page_title@</property>
-<h2>@page_title@</h2>
-@context_bar@
-<hr>
-<blockquote>
+<master src="master">
+<property name="title">@page_title@</property>
+<property name="context_bar">@context_bar@</property>
+
 <form method=post action=contact-edit-2>
 @hidden_vars@
 <table>
@@ -28,4 +26,4 @@
 
 <center><input type=submit value="@activity@"></center>
 </form>
-</blockquote>
+

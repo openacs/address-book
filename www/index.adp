@@ -1,10 +1,8 @@
-<master>
-<property name=title>@instance_name@</property>
-<h2>@instance_name@</h2>
-@context_bar@
-<hr>
-<blockquote>
-<form action=./>
+<master src="master">
+<property name="title">@instance_name@</property>
+<property name="context_bar">@context_bar@</property>
+
+<form action="./">
 <input type=text name=substr size=20 maxlength=40 value=@escaped_substr@>
 <input type=submit value=Search>
 </form>
@@ -21,4 +19,3 @@
 </if>
 </p>
 </center>
-</blockquote>

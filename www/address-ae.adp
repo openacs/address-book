@@ -1,13 +1,10 @@
-<master>
+<master src="master">
 <property name=title>@page_title@</property>
-<h2>@page_title@</h2>
-@context_bar@
-<hr>
-<blockquote>
+<property name="context_bar">@context_bar@</property>
+
 <form action=address-ae-2>
 @address_widget@
 <center>
 <input type=submit value="@activity@">
 </center>
 </form>
-</blockquote>

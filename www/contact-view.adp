@@ -1,9 +1,7 @@
-<master>
-<property name=title>@page_title@</property>
-<h2>@page_title@</h2>
-@context_bar@
-<hr>
-<blockquote>
+<master src="master">
+<property name="title">@page_title@</property>
+<property name="context_bar">@context_bar@</property>
+
 <table>
 <tr>
 <td valign=top align=left>First Name:</td>
@@ -93,4 +91,3 @@
   </tr>
 </if>
 </table>
-</blockquote>

@@ -11,7 +11,7 @@
  Displaying all contacts containing the string '@escaped_substr@'. [ <a href=./>Show All</a>  ]
 </if>
 <p>
-@contact_table@
+@contact_table;noquote@
 </p>
 <p>
 <if @create_p@ eq 1>

@@ -1,6 +1,6 @@
 <master>
-<property name="title">@instance_name@</property>
-<property name="context">@context@</property>
+<property name="title">@instance_name;noquote@</property>
+<property name="context">@context;noquote@</property>
 
 <form action="./">
 <input type=text name=substr size=20 maxlength=40 value=@escaped_substr@>

@@ -40,17 +40,13 @@ if ![empty_string_p $substr] {
 
     regsub -all {%} $substr {} substr
 
-    set like_clause "like '%[string tolower $substr]%'"
+    set substr [string tolower $substr]
 
-    set search_filter "and (lower(last_name) $like_clause
-        or lower(first_names) $like_clause
-        or lower(title) $like_clause
-        or lower(organization) $like_clause
-        or lower(work_phone) $like_clause
-        or lower(home_phone) $like_clause
-        or lower(fax) $like_clause
-        or lower(other) $like_clause
-        or lower(email) $like_clause)"
+    # DRB: This depends on support for partial string matches of some sort...
+    set like_clause [db_map like_clause]
+
+    set search_filter [db_map search_filter]
+
 }
 
 set datadef {
@@ -72,24 +68,8 @@ set datadef {
 # This invokes a bunch of functions, which is bad, I think, but maybe it's still way faster than the
 # join, 'cause the view meant for joining has been commented out in the permission SQL file... ?
 
-set sql_query "
-    select contact_id,
-           nvl(last_name,'<br>') as last_name,
-           nvl(first_names,'<br>') as first_names,
-           nvl(title,'<br>') as title,
-           nvl(organization,'<br>') as organization,
-           nvl(work_phone,'<br>') as work_phone,
-           nvl(home_phone,'<br>') as home_phone,
-           nvl(fax,'<br>') as fax,
-           nvl(other,'<br>') as other,
-           nvl(email,'<br>') as email,
-           acs_permission.permission_p(acr.rel_id,:user_id,'delete') as delete_p,
-           acr.rel_id
-      from ab_contacts_related acr
-     where acs_permission.permission_p(contact_id,:user_id,'read') = 't'
-       and object_id = :instance_id
-      [value_if_exists search_filter]
-"
+set sql_query [db_map sql_query]
+
 append sql_query [ad_order_by_from_sort_spec $orderby $datadef]
 
 if { $instance_id && $user_id } {

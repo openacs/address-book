@@ -118,6 +118,9 @@ create table ab_contact_attr_types (
 			unique
 );
 
+-- DRB: where's the friggin' index on this table?  Why don't we
+-- use type_id rather than type_key or get rid of type_id?
+
 -- ab_contact_attrs TABLE
 create table ab_contact_attrs (
 	attr_id		integer not null

@@ -7,7 +7,7 @@
     <initial-install-p>f</initial-install-p>
     <singleton-p>f</singleton-p>
 
-    <version name="4.0a2" url="http://www.arsdigita.com/acs-repository/download/apm/address-book-4.0a2.apm">
+    <version name="5.0d1" url="http://www.arsdigita.com/acs-repository/download/apm/address-book-5.0d1.apm">
     <database-support>
     </database-support>
         <owner url="mailto:jmileham@arsdigita.com">John Mileham</owner>
@@ -16,8 +16,8 @@
         <vendor url="http://www.arsdigita.com/">ArsDigita Corporation</vendor>
         <description format="text/html">The Address Book is an application/service hybrid. As an application, it provides a complete UI for storing, retrieving and searching for individually permissioned contacts. As a service, Address Book provides a storage mechanism for contact information and associating it with other objects. Each contact has identity info as well as an arbitrary number of custom attributes (which may be used for phone numbers, email addresses, etc.) and an arbitrary number of street addresses.</description>
 
-        <provides url="address-book" version="4.0a2"/>
-        <requires url="acs-kernel" version="4.6.2"/>
+        <provides url="address-book" version="5.0d1"/>
+        <requires url="acs-kernel" version="5.0d13"/>
 
         <files>
             <file type="package_spec" path="address-book.info"/>

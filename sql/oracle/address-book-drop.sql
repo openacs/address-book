@@ -12,7 +12,7 @@ declare
   v_row ab_contact_attrs%ROWTYPE;
 begin
   for v_row in object_id_c loop
-    ab_contact_attr.delete(v_row.attr_id);
+    ab_contact_attr.del(v_row.attr_id);
   end loop;
 end;
 /
@@ -25,7 +25,7 @@ declare
   v_row ab_contact_rels%ROWTYPE;
 begin
   for v_row in object_id_c loop
-    ab_contact_rel.delete(v_row.rel_id);
+    ab_contact_rel.del(v_row.rel_id);
   end loop;
 end;
 /
@@ -38,7 +38,7 @@ declare
   v_row ab_contact_attr_types%ROWTYPE;
 begin
   for v_row in object_id_c loop
-    ab_contact_attr_type.delete(v_row.type_id);
+    ab_contact_attr_type.del(v_row.type_id);
   end loop;
 end;
 /
@@ -50,7 +50,7 @@ declare
   v_row ab_contacts%ROWTYPE;
 begin
   for v_row in object_id_c loop
-    ab_contact.delete(v_row.contact_id);
+    ab_contact.del(v_row.contact_id);
   end loop;
 end;
 /

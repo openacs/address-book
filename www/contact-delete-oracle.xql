@@ -7,7 +7,7 @@
       <querytext>
       
 	begin
-	  ab_contact_rel.delete(:rel_id);
+	  ab_contact_rel.del(:rel_id);
 	end;
     
       </querytext>
@@ -29,7 +29,7 @@
 	    begin
 
 	      -- Delete the contact, blowing away orphan addresses.
-	      ab_contact.delete(contact_id => :contact_id,
+	      ab_contact.del(contact_id => :contact_id,
 	                        delete_orphan_addresses_p => 't');
 	    end;
 	

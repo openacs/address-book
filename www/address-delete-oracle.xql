@@ -7,7 +7,7 @@
       <querytext>
       
 	begin
-	  location_rel.delete(:rel_id);
+	  location_rel.del(:rel_id);
 	end;
     
       </querytext>
@@ -29,10 +29,10 @@
 	      open subplace_rel_cursor;
 	      fetch subplace_rel_cursor into v_rel_id;
 	      if not subplace_rel_cursor%NOTFOUND then
-	        subplace_rel.delete(v_rel_id);
+	        subplace_rel.del(v_rel_id);
 	      end if;
 	      close subplace_rel_cursor;
-	      pl_address.delete(:address_id);
+	      pl_address.del(:address_id);
 	    end;
 	
       </querytext>

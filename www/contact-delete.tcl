@@ -16,7 +16,7 @@ ad_require_permission $rel_id delete
 db_transaction {
     db_exec_plsql delete_ab_contact_rel {
 	begin
-	  ab_contact_rel.delete(:rel_id);
+	  ab_contact_rel.del(:rel_id);
 	end;
     }
 
@@ -46,7 +46,7 @@ db_transaction {
     	    db_exec_plsql delete_orphan_address {
                 begin
     	      -- Delete the contact, blowing away orphan addresses.
-    	      ab_contact.delete(contact_id => :contact_id,
+    	      ab_contact.del(contact_id => :contact_id,
     	                        delete_orphan_addresses_p => 't');
     	        end;
     	    }

@@ -104,7 +104,7 @@ as
   type_id	in ab_contact_attr_types.type_id%TYPE
  ) return ab_contact_attr_types.type_name%TYPE;
 
- procedure delete (
+ procedure del (
   type_id	in ab_contact_attr_types.type_id%TYPE
  );
 
@@ -166,13 +166,13 @@ as
  end name;
 
 
- procedure delete (
+ procedure del (
   type_id	in ab_contact_attr_types.type_id%TYPE
  )
  is
  begin
-  acs_object.delete(type_id);
- end delete;
+  acs_object.del(type_id);
+ end del;
 
 end ab_contact_attr_type;
 /
@@ -289,7 +289,7 @@ as
   attr_id_two		in ab_contact_attrs.attr_id%TYPE
  );
 
- procedure delete (
+ procedure del (
   attr_id	in ab_contact_attrs.attr_id%TYPE
  );
 
@@ -399,13 +399,13 @@ as
  end swap_sort;
 
 
- procedure delete (
+ procedure del (
   attr_id	in ab_contact_attrs.attr_id%TYPE
  )
  is
  begin
-  acs_object.delete(attr_id);
- end delete;
+  acs_object.del(attr_id);
+ end del;
 
 end ab_contact_attr;
 /
@@ -462,7 +462,7 @@ as
     category		in ab_contact_rels.category%TYPE default null
   ) return ab_contact_rels.rel_id%TYPE;
 
-  procedure delete (
+  procedure del (
     rel_id	in ab_contact_rels.rel_id%TYPE
   );
 
@@ -505,13 +505,13 @@ as
    return v_rel_id;
   end new;
 
-  procedure delete (
+  procedure del (
     rel_id	in ab_contact_rels.rel_id%TYPE
   )
   is
   begin
-    acs_object.delete(rel_id);
-  end delete;
+    acs_object.del(rel_id);
+  end del;
 
 end ab_contact_rel;
 /
@@ -549,7 +549,7 @@ as
   contact_id	in ab_contacts.contact_id%TYPE
  ) return varchar2;
 
- procedure delete (
+ procedure del (
   contact_id		in ab_contacts.contact_id%TYPE,
   delete_orphan_addresses_p	in char default 't'
  );
@@ -649,7 +649,7 @@ as
   return v_name;
  end name;
 
- procedure delete (
+ procedure del (
   contact_id			in ab_contacts.contact_id%TYPE,
   delete_orphan_addresses_p	in char default 't'
  )
@@ -668,16 +668,16 @@ as
    v_rel_id subplace_rels.rel_id%TYPE;
  begin
   -- First blow away attributes
-   for v_ab_contact_attrs_row in (select attr_id from ab_contact_attrs where contact_id = ab_contact.delete.contact_id) loop
-     ab_contact_attr.delete(v_ab_contact_attrs_row.attr_id);
+   for v_ab_contact_attrs_row in (select attr_id from ab_contact_attrs where contact_id = ab_contact.del.contact_id) loop
+     ab_contact_attr.del(v_ab_contact_attrs_row.attr_id);
    end loop;
 
   -- Then iterate through address location relations
 
-   for v_addresses_located_row in (select * from pl_addresses_located where locatee_id = ab_contact.delete.contact_id) loop
+   for v_addresses_located_row in (select * from pl_addresses_located where locatee_id = ab_contact.del.contact_id) loop
 
     -- Delete the rel
-     subplace_rel.delete(v_addresses_located_row.rel_id);
+     subplace_rel.del(v_addresses_located_row.rel_id);
 
 
     -- If we're deleting orphans then
@@ -693,11 +693,11 @@ as
 	 open subplace_rel_cursor(address_id => v_addresses_located_row.address_id);
 	 fetch subplace_rel_cursor into v_rel_id;
 	 if not subplace_rel_cursor%NOTFOUND then
-	   subplace_rel.delete(v_rel_id);
+	   subplace_rel.del(v_rel_id);
 	 end if;
 	 close subplace_rel_cursor;
 	-- Delete the address itself
-	 pl_address.delete(v_addresses_located_row.address_id);
+	 pl_address.del(v_addresses_located_row.address_id);
 
        end if;
 
@@ -705,8 +705,8 @@ as
 
    end loop;
 
-   acs_object.delete(contact_id);
- end delete;
+   acs_object.del(contact_id);
+ end del;
 
  function work_phone (
   contact_id	in ab_contacts.contact_id%TYPE

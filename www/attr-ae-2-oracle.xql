@@ -22,7 +22,7 @@
  
 <fullquery name="delete_empty_attr">      
       <querytext>
-      begin ab_contact_attr.delete(:attr_id); end;
+      begin ab_contact_attr.del(:attr_id); end;
       </querytext>
 </fullquery>
 

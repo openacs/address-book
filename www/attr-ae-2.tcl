@@ -42,7 +42,7 @@ if ![db_string attr_exists_p {select decode(count(*),0,0,1) from ab_contact_attr
 	 where attr_id = :attr_id
     }
   } else {
-      db_exec_plsql delete_empty_attr "begin ab_contact_attr.delete(:attr_id); end;"
+      db_exec_plsql delete_empty_attr "begin ab_contact_attr.del(:attr_id); end;"
   }
 }
 

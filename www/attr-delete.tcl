@@ -18,7 +18,7 @@ set contact_id [db_string contact_id {
 }]
 
 db_exec_plsql delete_attr {
-    begin ab_contact_attr.delete(:attr_id); end;
+    begin ab_contact_attr.del(:attr_id); end;
 }
 
 ad_returnredirect contact-view?contact_id=$contact_id

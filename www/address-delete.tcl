@@ -30,7 +30,7 @@ db_transaction {
 	#Make extra sure that the object we're deleting is indeed an address:
 
 	if ![db_string address_is_orphan_p {select decode(count(*),0,0,1) from acs_objects where object_id = :address_id and object_type = 'pl_address'}] {
-	    ad_return_forbidden "Security Violation" "address_id was modified in transit"
+	    ad_return_forbidden "Permission Denied" "address_id was modified in transit"
 	    ad_script_abort
 	}
 

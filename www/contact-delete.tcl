@@ -30,7 +30,7 @@ db_transaction {
 	# Make extra sure that the object we're deleting is indeed a contact (and not a subtype):
 
 	if ![db_string contact_is_orphan_p {select decode(count(*),0,0,1) from acs_objects where object_id = :contact_id and object_type = 'ab_contact'}] {
-	    ad_return_forbidden "Security Violation" "contact_id was modified in transit"
+	    ad_return_forbidden "Permission Denied" "contact_id was modified in transit"
 	    ad_script_abort
 	}
 

@@ -3,7 +3,7 @@ ad_page_contract {
     Edit basic contact info page
 
     @author John Mileham (jmileham@arsdigita.com)
-    @creation_date 11/20/2000
+    @creation-date 11/20/2000
     @cvs-id $Id$
 
 } {

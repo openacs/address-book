@@ -3,7 +3,7 @@ ad_page_contract {
     Address Book Contact Add Page
 
     @author John Mileham (jmileham@arsdigita.com)
-    @creation_date 11/20/2000
+    @creation-date 11/20/2000
     @cvs-id $Id$
 
 } {

@@ -3,7 +3,7 @@ ad_page_contract {
     address-book attribute add/edit page
 
     @author John Mileahm (jmileham@arsdigita.com
-    @creation_date 11/20/2000
+    @creation-date 11/20/2000
     @cvs-id $Id$
 } {
     contact_id:integer

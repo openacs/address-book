@@ -425,10 +425,6 @@ select new.v_attr_id, new.contact_id, new.type_key, new.value, (sort_key - 1)
   end if;
 
   return v_attr_id;
- end new;
-    );
-
-   return v_attr_id;
 
 end;' language 'plpgsql';
 
@@ -638,7 +634,7 @@ begin
 	-- If they supplied an object_id, relate it:
 	--   if object_id is not null then
     v_rel_id :=
-    ab_contact_rel.new(
+    ab_contact_rel__new(
      null,		--     rel_id		
      null,		--     rel_type		
      new__object_id,	--     object_id_one	
@@ -646,10 +642,8 @@ begin
      new__creation_user,--     creation_user	
      new__creation_ip,  --     creation_ip	
      new__category	--     category		
-);
+   );
 
-   end if;
- 
    insert into ab_contacts
     (contact_id, first_names, last_name,
      title, organization)
@@ -681,16 +675,20 @@ begin
 end;' language 'plpgsql';
 
 create function ab_contact__delete_orphan_address(integer) returns integer as '
-
 declare
-  v_rel_id subplace_rels.rel_id%TYPE;
+  v_rel_id integer;
 begin
-  select sr.rel_id
-  from subplace_rels sr, acs_rels ar
-  where ar.rel_id = sr.rel_id and ar.object_id_two = :address_id;
-  if found then
-    subplace_rel__delete(v_rel_id);
-  pl_address__delete(:address_id);
+  raise exception ''ab_contact__delete_orphan_address NOT IMPLEMENTED'';
+
+  if exists ( select sr.rel_id
+          from subplace_rels sr, acs_rels ar
+          where ar.rel_id = sr.rel_id and ar.object_id_two = v_rel_id) then 
+
+        PERFORM subplace_rel__delete(v_rel_id);
+
+        PERFORM pl_address__delete(v_rel_id);
+
+   end if;
 end;' language 'plpgsql';
 	
 
@@ -703,7 +701,7 @@ declare
 	contact_id			alias for $1;		
 	delete_orphan_addresses_p	alias for $2;
 	v_ab_contact_attrs_row		ab_contact_attrs%ROWTYPE;
-	v_addresses_located_row		pl_addresses_located%ROWTYPE;
+	v_addresses_located_row		record; -- pl_addresses_located%ROWTYPE;
         v_rel_id			ab_contact_rels.rel_id%TYPE;
 begin
 
@@ -713,13 +711,13 @@ begin
        from   ab_contact_attrs 
        where  contact_id = ab_contact.delete.contact_id) 
    loop
-	ab_contact_attr__delete(v_ab_contact_attrs_row.attr_id);
+	PERFORM ab_contact_attr__delete(v_ab_contact_attrs_row.attr_id);
    end loop;
 
    for v_addresses_located_row in (select * from pl_addresses_located where locatee_id = ab_contact.delete.contact_id) loop
-     subplace_rel__delete(v_addresses_located_row.rel_id);
+     PERFORM subplace_rel__delete(v_addresses_located_row.rel_id);
      if delete_orphan_addresses_p and
-        not exists(select 1
+        not exists (select 1
                    from place_element_map pem, pl_address pl
                    where pem.place_id = pl.address_id and
                    v_addresses_located_row.address_id = pl.address_id) 
@@ -727,10 +725,11 @@ begin
        select sr.rel_id into v_rel_id
        from subplace_rels sr, acs_rels ar
        where ar.rel_id = sr.rel_id and ar.object_id_two = v_addresses_located_row.address_id;
-       if found then
-         subplace_rel__delete(v_rel_id);
+       if v_rel_id is not null then
+           PERFORM subplace_rel__delete(v_rel_id);
        end if;
      end if;
+   end loop;
 return 0;
 end;' language 'plpgsql';
 

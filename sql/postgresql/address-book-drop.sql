@@ -2,6 +2,11 @@
 -- @author John Mileham (jmileham@arsdigita.com)
 -- @cvs-id $Id$
 
+select ab_contact_attr__delete(attr_id) from ab_contact_attrs;
+select ab_contact_rel__delete(rel_id) from ab_contact_rels;
+select ab_contact_attr_type__delete(type_id) from ab_contact_attr_types;
+select ab_contact__delete(contact_id) from ab_contacts;
+
 drop view ab_contacts_related;
 
 drop view ab_contacts_complete;
@@ -11,9 +16,6 @@ drop function ab_contact_attr_type__delete(integer);     -- RC
 
 
 drop function ab_contact_attr__swap_sort(integer,integer);--RC
-drop function ab_contact_attr__delete();
-
-drop function ab_contact_attr__delete();
 drop function ab_contact_attr_type__new(
        integer,    
        varchar,    
@@ -40,99 +42,18 @@ drop function ab_contact_attr__new (
  
 drop function ab_contact__delete(integer, boolean);
 
--- the original loops in Orcle look like:
--- declare
---   cursor object_id_c is
---    select rel_id from ab_contact_rels;
---  v_row ab_contact_rels%ROWTYPE;
---begin
---  for v_row in object_id_c loop
---    ab_contact_rel.delete(v_row.rel_id);
---  end loop;
---end;
---/
---show errors
+select acs_rel_type__drop_type('ab_contact_rel');
+select acs_rel_type__drop_role('contact');
+select acs_object_type__drop_type('ab_contact_attr');
 
-
-create function inline_0 () returns integer as '
-begin
-	PERFORM
-		for attr_id 
-		    in select attr_id from ab_contact_attrs
-		       loop
-		       	ab_contact_attr__delete(v_row.attr_id);
-			end loop;
-
-			for rel_id 
-			in select rel_id from ab_contact_rels
-			loop			
-				ab_contact_rel__delete(v_row.rel_id);
-			end loop;
-
-			for type_id 
-			in select type_id from ab_contact_attr_types
-			loop
-				ab_contact_attr_types__delete(v_row.type_id);
-			end loop;
-
-			for contact_id 
-			in select contact_id from ab_contacts
-			loop
-				ab_contacts__delete(v_row.contact_id);
-			end loop;
-return null;
-end;' language 'plpgsql';
-select inline_0 ();
-drop function inline_0 ();
-
-
-drop package ab_contact;
-
-drop package ab_contact_rel;
-
-drop table ab_contact_rels;
-
-begin
- acs_rel_type__drop_type(''ab_contact_rel'');
- acs_rel_type__drop_role(''contact'');
-end;
-less
-
-drop package ab_contact_attr;
-
-drop table ab_contact_attrs;
-
-create function inline_0 () returns integer as '
-begin
-	PERFORM acs_object_type__drop_type(''ab_contact_attr'');
-returns null;
-end;' language 'plpgsql';
-select inline_0 ();
-drop function inline_0 ();
-
-
-drop package ab_contact_attr_type;
 
 drop table ab_contact_attr_types;
 
-create function inline_0 () returns integer as '
-begin
-	PERFORM  acs_object_type__drop_type(''ab_contact_attr_type'');
-returns null;
-end;' language 'plpgsql';
-select inline_0 ();
-drop function inline_0 ();
+select  acs_object_type__drop_type('ab_contact_attr_type');
 
 drop table ab_contacts;
 
-
-create function inline_0 () returns integer as '
-begin
-	PERFORM acs_object_type__drop_type(''ab_contact'');
-returns null;
-end;' language 'plpgsql';
-select inline_0 ();
-drop function inline_0 ();
+select  acs_object_type__drop_type('ab_contact');
 
 drop function ab_contact_rel__delete(integer);
 drop function ab_contact_rel__new(integer,integer,integer,integer,varchar,varchar,varchar);

@@ -1,6 +1,7 @@
 --
 -- packages/address-book/sql/address-book-create.sql
--- @author ported to pg by Rafael Calvo (rafa@sedal.usyd.edu.au)
+-- @author ported to pg by Rafael Calvo (rafa@sedal.usyd.edu.au) and 
+--         Don Baccus (dhogaza@pacifier.com)
 -- @author jmileham@arsdigita.com
 -- @creation_date 2000-12-04
 -- @cvs-id $Id$
@@ -435,8 +436,8 @@ create function ab_contact_attr__swap_sort (
        integer      -- ab_contact_attrs.attr_id%TYPE
 ) returns integer as '
 declare
-	attr_id_one    alias for $1;         
-	attr_id_two    alias for $2;
+	p_attr_id_one    alias for $1;         
+	p_attr_id_two    alias for $2;
 begin
   -- The exists clause verifies that the application is trying
   -- to perform a legal swap (one between two attributes of
@@ -445,13 +446,13 @@ begin
   update ab_contact_attrs aca1
      set sort_key = (select sort_key
                        from ab_contact_attrs aca2
-                      where aca1.attr_id = decode(aca2.attr_id,
-                                           swap_sort.attr_id_one, swap_sort.attr_id_two,
-                                           swap_sort.attr_id_two, swap_sort.attr_id_one))
-   where attr_id in (swap_sort.attr_id_one, swap_sort.attr_id_two)
+                      where aca1.attr_id = case aca2.attr_id
+                                           when p_attr_id_one then p_attr_id_two
+                                           when p_attr_id_two then p_attr_id_one)
+   where attr_id in (p_attr_id_one, p_attr_id_two)
      and exists (select 1 from ab_contact_attrs aca3, ab_contact_attrs aca4
-                  where aca3.attr_id = swap_sort.attr_id_one
-                    and aca4.attr_id = swap_sort.attr_id_two
+                  where aca3.attr_id = p_attr_id_one
+                    and aca4.attr_id = p_attr_id_two
                     and aca3.contact_id = aca4.contact_id);
 
 end;' language 'plpgsql';
@@ -471,16 +472,11 @@ end;' language 'plpgsql';
 -- --------------------
 -- -- AB_CONTACT_REL --
 -- --------------------
---  RC: acs_rel_type is defined in packages/acs-kernel/sql/postgresql/acs-relationships-create.sql
-
--- PERFORM  acs_rel_type__create_role(''contact''); 
---  -- Dont know what to call the object associated with the oontact,
---  -- so I wont define a role for it.  Should be ok, seeing as the
---  -- groups system does this too.
 
 create function inline_0 ()
 returns integer as '
 begin
+PERFORM  acs_rel_type__create_role(''contact''); 
 PERFORM  acs_rel_type__create_type (
    ''ab_contact_rel'',			--   rel_type
    ''Address Book Contact Relation'',	--   pretty_name
@@ -681,23 +677,32 @@ begin
 
 end;' language 'plpgsql';
 
+create function pl_address__orphan_address(integer) returns integer as '
+
+declare
+  v_rel_id subplace_rels.rel_id%TYPE;
+begin
+  select sr.rel_id
+  from subplace_rels sr, acs_rels ar
+  where ar.rel_id = sr.rel_id and ar.object_id_two = :address_id;
+  if found then
+    subplace_rel__delete(v_rel_id);
+  pl_address__delete(:address_id);
+end;' language 'plpgsql';
+	
 
 -- function delete
 create function ab_contact__delete (
-	-- contact_id	
-	-- delete_orphan_addresses_p	in char default t
        integer,         -- ab_contacts.contact_id%TYPE
        boolean		-- char default t
 ) returns integer as '
 declare
 	contact_id			alias for $1;		
 	delete_orphan_addresses_p	alias for $2;
-	v_ab_contact_attrs_row ab_contact_attrs%ROWTYPE;
-	v_addresses_located_row pl_addresses_located%ROWTYPE;
+	v_ab_contact_attrs_row		ab_contact_attrs%ROWTYPE;
+	v_addresses_located_row		pl_addresses_located%ROWTYPE;
+        v_rel_id			ab_contact_rels.rel_id%TYPE;
 begin
-	-- RC: Code to find orphans temporarily removed: FIX
-	-- RC: set delete_orphan_address to false
-	delete_orphan_addresses_p = ''f'';
 
 -- First blow away attributes
    for v_ab_contact_attrs_row in (
@@ -708,114 +713,41 @@ begin
 	ab_contact_attr__delete(v_ab_contact_attrs_row.attr_id);
    end loop;
 
-  -- Then iterate through address location relations
-  -- RC: Missing code that delets address relations-- FIX
-
-    -- If we are deleting orphans then
-    -- RC: Missing code here. This is buggy and should be completed.
-
-
+   for v_addresses_located_row in (select * from pl_addresses_located where locatee_id = ab_contact.delete.contact_id) loop
+     subplace_rel__delete(v_addresses_located_row.rel_id);
+     if delete_orphan_addresses_p and
+        not exists(select 1
+                   from place_element_map pem, pl_address pl
+                   where pem.place_id = pl.address_id and
+                   v_addresses_located_row.address_id = pl.address_id) 
+     then
+       select sr.rel_id into v_rel_id
+       from subplace_rels sr, acs_rels ar
+       where ar.rel_id = sr.rel_id and ar.object_id_two = v_addresses_located_row.address_id;
+       if found then
+         subplace_rel__delete(v_rel_id);
+       end if;
+     end if;
 return 0;
 end;' language 'plpgsql';
 
-
---create function ab_contact__delete (
---	-- contact_id	
---	-- delete_orphan_addresses_p	in char default
---       integer,         -- ab_contacts.contact_id%TYPE
---       boolean		-- char default 
---) returns integer as '
---declare
---	contact_id			alias for $1;		
---	delete_orphan_addresses_p	alias for $2;
---	v_ab_contact_attrs_row ab_contact_attrs%ROWTYPE;
---	v_addresses_located_row pl_addresses_located%ROWTYPE;
---begin
---	select count(*) = 0 
---             into v_address_is_orphan_p
---             from place_element_map
---            where place_id = v_addresses_located_row.address_id;
---
---	v_address_is_orphan_p boolean;
---
---        if v_address_is_orphan_p then
---	   select sr.rel_id
---           into   v_rel_id
---           from   subplace_rels sr, acs_rels ar
---           where  ar.rel_id = sr.rel_id
---           and    ar.object_id_two = v_addresses_located_row.address_id;
---          
---	  v_rel_id subplace_rels.rel_id%TYPE;
---
---
---  -- First blow away attributes
---   for v_ab_contact_attrs_row in (
---       select attr_id 
---       from   ab_contact_attrs 
---       where  contact_id = ab_contact.delete.contact_id) 
---   loop
---	ab_contact_attr__delete(v_ab_contact_attrs_row.attr_id);
---   end loop;
---
---  -- Then iterate through address location relations
---
---   for v_addresses_located_row in (
---       select * 
---       from pl_addresses_located 
---       where locatee_id = ab_contact.delete.contact_id) 
---   loop
---
---    -- Delete the rel
---     subplace_rel__delete(v_addresses_located_row.rel_id);
---
---    -- If we're deleting orphans then
---     if delete_orphan_addresses_p = 't' then
---
---    -- Check if the address is an orphan
---       open address_is_orphan_p_cursor(address_id => v_addresses_located_row.address_id);
---       fetch address_is_orphan_p_cursor into v_address_is_orphan_p;
---       close address_is_orphan_p_cursor;
---       if v_address_is_orphan_p = 't' then
---
---        -- Delete the address's subplace_relation
---         open subplace_rel_cursor(address_id => v_addresses_located_row.address_id);
---         fetch subplace_rel_cursor into v_rel_id;
---         if not subplace_rel_cursor%NOTFOUND then
---           PERFORM subplace_rel.delete(v_rel_id);
---         end if;
---         close subplace_rel_cursor;
---
---        -- Delete the address itself
---         PERFORM pl_address__delete(v_addresses_located_row.address_id);
---
---       end if;
---
---     end if;
---
---
---
---return 0;
---end;' language 'plpgsql';
-
-
-select * from users;
 
 -- function work_phone
 create function ab_contact__work_phone (
        --  contact_id
        integer  -- ab_contacts.contact_id%TYPE
-) return varchar as '
+) returns varchar as '
 declare
-        contact_id_p alias for $1;
+        p_contact_id alias for $1;
         v_value ab_contact_attrs.value%TYPE;  -- varchar(200)
 begin
    select value
      into v_value
      from ab_contact_attrs
-     where contact_id = contact_id_p
+     where contact_id = p_contact_id
      and sort_key = (select min(sort_key)
                        from ab_contact_attrs
-                      where contact_id = contact_id_p
+                      where contact_id = p_contact_id
                         and type_key = ''work_phone'');
   return v_value;
 end;' language 'plpgsql';
@@ -824,18 +756,18 @@ end;' language 'plpgsql';
 create function ab_contact__home_phone (
        -- contact_id	
        integer		-- ab_contacts.contact_id%TYPE
-) return varchar as ' 
+) returns varchar as ' 
 declare
-	contact_id_p	alias for $1;
+	p_contact_id	alias for $1;
 	v_value ab_contact_attrs.value%TYPE;
 begin
 	select value
 	into v_value
 	from ab_contact_attrs
-	where contact_id = contact_id_p
+	where contact_id = p_contact_id
 	and sort_key = (select min(sort_key)
 	       from ab_contact_attrs
-	      where contact_id = contact_id_p
+	      where contact_id = p_contact_id
 		and type_key = ''home_phone'');
    return v_value;
 
@@ -845,18 +777,18 @@ end;' language 'plpgsql';
 create function ab_contact__fax (
        -- contact_id	
        integer		-- ab_contacts.contact_id%TYPE
-) return varchar as '
+) returns varchar as '
 declare
-	contact_id_p alias for $1;
+	p_contact_id alias for $1;
 	v_value ab_contact_attrs.value%TYPE;
 begin
 	select value
 	    into v_value
 	    from ab_contact_attrs
-	   where contact_id = contact_id_p
+	   where contact_id = p_contact_id
 	     and sort_key = (select min(sort_key)
  		       from ab_contact_attrs
- 		      where contact_id = contact_id_p
+ 		      where contact_id = p_contact_id
  			and type_key = ''fax'');
 return v_value;
 
@@ -866,38 +798,38 @@ end;' language 'plpgsql';
 create function ab_contact__other (
        -- contact_id	
        integer		-- ab_contacts.contact_id%TYPE
-) return varchar as '
+) returns varchar as '
 declare
-	contact_id_p alias for $1;
+	p_contact_id alias for $1;
 	v_value ab_contact_attrs.value%TYPE;
 begin
    select value
      into v_value
      from ab_contact_attrs
-    where contact_id = contact_id_p
+    where contact_id = p_contact_id
       and sort_key = (select min(sort_key)
  		       from ab_contact_attrs
- 		      where contact_id = contact_id_p
+ 		      where contact_id = p_contact_id
  			and type_key = ''other'');
    return v_value;
 end;' language 'plpgsql';
 
 -- function email
-create function ab_contact__fax (
+create function ab_contact__email (
        -- contact_id	
        integer		-- ab_contacts.contact_id%TYPE
-) return varchar as '
+) returns varchar as '
 declare
-	contact_id_p alias for $1;
+	p_contact_id alias for $1;
 	v_value ab_contact_attrs.value%TYPE;
 begin
    select value
      into v_value
      from ab_contact_attrs
-    where contact_id = contact_id_p
+    where contact_id = p_contact_id
       and sort_key = (select min(sort_key)
  		       from ab_contact_attrs
- 		      where contact_id = contact_id_p
+ 		      where contact_id = p_contact_id
  			and type_key = ''email'');
    return v_value;
 
@@ -909,11 +841,11 @@ end;' language 'plpgsql';
 
 create view ab_contacts_complete as
    select ac.*,
-          ab_contact__work_phone(contact_id) work_phone,
-          ab_contact__home_phone(contact_id) home_phone,
-          ab_contact__fax(contact_id) fax,
-          ab_contact__other(contact_id) other,
- 	  ab_contact__email(contact_id) email
+          ab_contact__work_phone(contact_id) as work_phone,
+          ab_contact__home_phone(contact_id) as home_phone,
+          ab_contact__fax(contact_id) as fax,
+          ab_contact__other(contact_id) as other,
+ 	  ab_contact__email(contact_id) as email
      from ab_contacts ac;
 
 -- 

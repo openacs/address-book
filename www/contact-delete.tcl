@@ -38,17 +38,19 @@ db_transaction {
 	# Clean up perms on the contact and blow it away, deleting orphan addresses it is associated with.
 	# an orphan address is an address without any location rels.
 
-	db_exec_plsql delete_orphan_address {
-	    begin
-	      -- Delete perms on the contact
-	      delete from acs_permissions
-               where object_id = :contact_id;
-
-	      -- Delete the contact, blowing away orphan addresses.
-	      ab_contact.delete(contact_id => :contact_id,
-	                        delete_orphan_addresses_p => 't');
-	    end;
-	}
+        db_transaction {
+    	    db_dml delete_orphan_address_perms {
+    	      delete from acs_permissions
+                   where object_id = :contact_id;
+    	    }
+    	    db_exec_plsql delete_orphan_address {
+                begin
+    	      -- Delete the contact, blowing away orphan addresses.
+    	      ab_contact.delete(contact_id => :contact_id,
+    	                        delete_orphan_addresses_p => 't');
+    	        end;
+    	    }
+        }
     }
 }
 

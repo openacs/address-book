@@ -5,10 +5,8 @@
 
 <fullquery name="delete_attr">      
       <querytext>
-      FIX ME PLSQL
-FIX ME PLSQL
 
-    begin ab_contact_attr__delete(:attr_id); end;
+        select ab_contact_attr__delete(:attr_id);
 
       </querytext>
 </fullquery>

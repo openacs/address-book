@@ -14,13 +14,19 @@
 </fullquery>
 
  
+<fullquery name="delete_orphan_address_perms">      
+      <querytext>
+      
+	 delete from acs_permissions
+         where object_id = :contact_id;
+	
+      </querytext>
+</fullquery>
+ 
 <fullquery name="delete_orphan_address">      
       <querytext>
       
 	    begin
-	      -- Delete perms on the contact
-	      delete from acs_permissions
-               where object_id = :contact_id;
 
 	      -- Delete the contact, blowing away orphan addresses.
 	      ab_contact.delete(contact_id => :contact_id,

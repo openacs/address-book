@@ -9,8 +9,6 @@
 
     <version name="4.0a2" url="http://www.arsdigita.com/acs-repository/download/apm/address-book-4.0a2.apm">
     <database-support>
-        <database>oracle</database>
-        <database>postgresql</database>
     </database-support>
         <owner url="mailto:jmileham@arsdigita.com">John Mileham</owner>
         <summary>Application to collaboratively view and edit addresses and contact information.</summary>

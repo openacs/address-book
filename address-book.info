@@ -14,7 +14,7 @@
         <summary>Application to collaboratively view and edit addresses and contact information.</summary>
         <release-date>2001-02-27</release-date>
         <vendor url="http://www.arsdigita.com/">ArsDigita Corporation</vendor>
-        <description format="text/html">The Address Book is an application/service hybrid. As an application, it provides a complete UI for storing, retrieving and searching for individually permissioned contacts. As a service, Address Book provides a storage mechanism for contact information and associating it with other objects. Each contact has identity info as well as an arbitrary number of custom attributes (which may be used for phone numbers, email addresses, etc.) and an arbitrary number of street addresses.</description>
+        <description format="text/html">The Address Book is an application/service hybrid. As an application, it provides a complete UI for storing, retrieving and searching for individually permissioned contacts. As a service, Address Book provides a storage mechanism for contact information and associating it with other objects. Each contact has identity info as well as an arbitrary number of custom attributes (which may be used for phone numbers, email addresses, etc.) and an arbitrary number of street addresses. The package is deprecated, and the contacts package can be used instead.</description>
 
         <provides url="address-book" version="5.0d1"/>
         <requires url="acs-kernel" version="5.0d13"/>

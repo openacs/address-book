@@ -19,7 +19,7 @@ drop function ab_contact_attr__swap_sort(integer,integer);--RC
 drop function ab_contact_attr_type__new(
        integer,    
        varchar,    
-       timestamp,  
+       timestamptz,  
        integer,    
        varchar,    
        integer,    
@@ -30,7 +30,7 @@ drop function ab_contact_attr__delete (integer);
 drop function ab_contact_attr__new (
       integer,    
        varchar,    
-       timestamp,  
+       timestamptz,  
        integer,    
        varchar,    
        integer,    
@@ -54,7 +54,7 @@ select  acs_object_type__drop_type('ab_contact', 'f');
 drop function ab_contact_rel__delete(integer);
 drop function ab_contact_rel__new(integer,integer,integer,integer,varchar,varchar,varchar);
 
-drop function ab_contact__new( integer,varchar,timestamp,integer,varchar,integer,varchar,varchar,varchar,varchar,integer,varchar);
+drop function ab_contact__new( integer,varchar,timestamptz,integer,varchar,integer,varchar,varchar,varchar,varchar,integer,varchar);
 drop function ab_contact__name( integer);
 
 drop function ab_contact__delete(integer, boolean);

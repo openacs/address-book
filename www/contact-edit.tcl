@@ -11,7 +11,7 @@ ad_page_contract {
 } -properties {
     hidden_vars:onevalue
     page_title:onevalue
-    context_bar:onevalue
+    context:onevalue
     escaped_first_names:onevalue
     escaped_last_name:onevalue
     escaped_title:onevalue
@@ -27,7 +27,7 @@ ad_require_permission $instance_id read
 ad_require_permission $contact_id write
 set activity "Update"
 set page_title "Edit a Contact"
-set context_bar [ad_context_bar [list contact-view?contact_id=$contact_id "View a Contact"] $activity]
+set context [list [list contact-view?contact_id=$contact_id "View a Contact"] $activity]
 
 set hidden_vars "<input type=hidden name=contact_id value=$contact_id>"
 

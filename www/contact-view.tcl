@@ -10,7 +10,7 @@ ad_page_contract {
     contact_id:integer,notnull
 } -properties {
     page_title:onevalue
-    context_bar:onevalue
+    context:onevalue
     contact_widget:onevalue
     write_p:onevalue
     create_p:onevalue
@@ -28,7 +28,7 @@ ad_require_permission $contact_id read
 
 set page_title "View a Contact"
 
-set context_bar [ad_context_bar "View a Contact"]
+set context [list "View a Contact"]
 
 ab::contact::1row $contact_id contact
 

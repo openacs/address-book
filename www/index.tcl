@@ -11,7 +11,7 @@ ad_page_contract {
     {substr:trim,optional ""}
 } -properties {
     instance_name:onevalue
-    context_bar:onevalue
+    context:onevalue
     user_id:onevalue
     create_p:onevalue
     admin_p:onevalue
@@ -27,7 +27,7 @@ ad_require_permission $instance_id read
 
 set instance_name [db_exec_plsql package_name {begin :1 := acs_object.name(:instance_id); end;}]
 
-set context_bar [ad_context_bar]
+set context [list]
 
 set create_p [ad_permission_p $instance_id create]
 

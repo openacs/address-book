@@ -9,7 +9,7 @@ ad_page_contract {
 } {
 } -properties {
     page_title:onevalue
-    context_bar:onevalue
+    context:onevalue
     hidden_vars:onevalue
     escaped_first_names:onevalue
     escaped_last_name:onevalue
@@ -29,7 +29,7 @@ ad_require_permission $instance_id create
 set page_title "Add a Contact"
 set activity "Add"
 set contact_id [db_nextval acs_object_id_seq]
-set context_bar [ad_context_bar $page_title]
+set context [list $page_title]
 
 set hidden_vars "<input type=hidden name=contact_id value=$contact_id>"
 

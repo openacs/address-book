@@ -1,6 +1,6 @@
-<master src="master">
+<master>
 <property name=>@page_title@</property>
-<property name="context_bar">@context_bar@</property>
+<property name="context">@context@</property>
 
 <form method=post action=contact-add-2>
 @hidden_vars@

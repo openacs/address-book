@@ -10,7 +10,7 @@ ad_page_contract {
     address_id:integer,optional
 } -properties {
     page_title:onevalue
-    context_bar:onevalue
+    context:onevalue
     address_widget:onevalue
     activity:onevalue
 }
@@ -35,7 +35,7 @@ if ![info exists address_id] {
     append address_widget [place::address::entrywidget -address_id $address_id]
 }
 
-set context_bar [ad_context_bar [list contact-view?contact_id=$contact_id "View a Contact"] Address]
+set context [list [list contact-view?contact_id=$contact_id "View a Contact"] Address]
 
 
 

@@ -10,7 +10,7 @@ ad_page_contract {
     attr_id:integer,optional
 } -properties {
     page_title:onevalue
-    context_bar:onevalue
+    context:onevalue
     attr_widget:onerow
     activity:onevalue
 }
@@ -62,7 +62,7 @@ append attr_widget "<input type=hidden name=attr_id value=$attr_id>
 [ab::contact_attr_type::select -default $type_key]
 <input type=text size=30 maxlength=200 name=attr_value value=\"[ad_quotehtml $value]\">
 "
-set context_bar [ad_context_bar [list contact-view?contact_id=$contact_id "View a Contact"] Attribute]
+set context [list [list contact-view?contact_id=$contact_id "View a Contact"] Attribute]
 
 
 ad_return_template

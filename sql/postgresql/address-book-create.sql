@@ -154,7 +154,7 @@ create function ab_contact_attr_type__new (
        -- type_key     
        integer,    -- ab_contact_attr_types.type_id%TYPE
        varchar,    -- acs_objects.object_type%TYPE
-       timestamp,  -- acs_objects.creation_date%TYPE
+       timestamptz, -- acs_objects.creation_date%TYPE
        integer,    -- acs_objects.creation_user%TYPE
        varchar,    -- acs_objects.creation_ip%TYPE
        integer,    -- acs_objects.context_id%TYPE
@@ -356,7 +356,7 @@ create function ab_contact_attr__new (
        -- before_attr_id        in ab_contact_attrs.attr_id%TYPE
        integer,    -- ab_contact_attrs.attr_id%TYPE
        varchar,    -- acs_objects.object_type%TYPE
-       timestamp,  -- acs_objects.creation_date%TYPE
+       timestamptz, -- acs_objects.creation_date%TYPE
        integer,    -- acs_objects.creation_user%TYPE
        varchar,    -- acs_objects.creation_ip%TYPE
        integer,    -- acs_objects.context_id%TYPE
@@ -596,7 +596,7 @@ create function ab_contact__new (
        -- category	
        integer,		-- ab_contacts.contact_id%TYPE default null,
        varchar,		-- acs_objects.object_type%TYPE
-       timestamp,	-- acs_objects.creation_date%TYPE
+       timestamptz,	-- acs_objects.creation_date%TYPE
        integer,		-- acs_objects.creation_user%TYPE
        varchar,		-- acs_objects.creation_ip%TYPE
        integer,		-- acs_objects.context_id%TYPE

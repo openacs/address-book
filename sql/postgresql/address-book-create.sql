@@ -61,12 +61,12 @@ begin
    ''Address Book Contact Attribute Type'',  -- pretty_name
    ''Address Book Contact Attribute Types'', -- pretty_plural
    ''acs_object'',                           -- supertype
-   ''ab_contact_attr_type'',                 -- table_name
+   ''ab_contact_attr_types'',                 -- table_name
    ''type_id'',                              -- id_column
    ''ab_contact_attr_type'',                 -- package_name (default)
    ''f'',                                    -- abstract_p (default)
    null,                                     -- type_extension_table (default)
-   ''ab_contact_attr_type.name''            -- name_method (default)
+   ''ab_contact_attr_type__name''            -- name_method (default)
    );
 
 -- ab_contact_attrs OBJECT
@@ -213,16 +213,16 @@ create function ab_contact_attr_type__delete (
 declare
   delete__type_id            alias for $1;
 begin
-    delete from acs_permissions
-                   where object_id = delete__type_id;
+  delete from acs_permissions
+  where object_id = delete__type_id;
 
-        delete from ab_contact_attr_types
-                   where type_id = delete__type_id;
+  delete from ab_contact_attr_types
+  where type_id = delete__type_id;
 
-        raise NOTICE ''Deleting contact attribute type...'';
-        PERFORM acs_object__delete(delete__type_id);
+  raise NOTICE ''Deleting contact attribute type...'';
+  PERFORM acs_object__delete(delete__type_id);
 
-        return 0;
+  return 0;
 
 end;' language 'plpgsql';
 
@@ -677,7 +677,7 @@ begin
 
 end;' language 'plpgsql';
 
-create function pl_address__orphan_address(integer) returns integer as '
+create function ab_contact__delete_orphan_address(integer) returns integer as '
 
 declare
   v_rel_id subplace_rels.rel_id%TYPE;

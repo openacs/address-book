@@ -27,7 +27,7 @@ ad_require_permission $instance_id read
 
 set instance_name [db_exec_plsql package_name {begin :1 := acs_object.name(:instance_id); end;}]
 
-set context {}
+set context [list]
 
 set create_p [ad_permission_p $instance_id create]
 

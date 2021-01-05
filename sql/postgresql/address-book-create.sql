@@ -487,11 +487,11 @@ PERFORM  acs_rel_type__create_type (
    ''acs_object'',			--   object_type_one 
    null,				--   role_one
    0,					--   min_n_rels_one 
-   null,				--   max_n_rels_one
+   null::integer,		        --   max_n_rels_one
    ''ab_contact'',			--   object_type_two
    ''contact'',				--   role_two 
    0,					--   min_n_rels_two
-    null				--   max_n_rels_two
+    null::integer			--   max_n_rels_two
   );
 return 0;
 end;' language 'plpgsql';
